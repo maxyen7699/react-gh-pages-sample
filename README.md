@@ -1,10 +1,8 @@
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-# react-gh-pages-sample
-# week412
+# React練習：todo List
+完成 六角學院 2023 React 入門攻略工作坊 實作的練習。
+內容包含：
+1. 登入及註冊畫面。
+2. 待辦清單畫面，包含一個輸入列，即三個分頁。
+3. 串接六角學院提供的API。
+# 調整Axios呼叫方式
+將原本每一個分頁中各自實作的相同的axios邏輯抽出，做成一個獨立的API，以簡化每一個分頁的程式碼。
