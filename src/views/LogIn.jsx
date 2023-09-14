@@ -44,15 +44,16 @@ function Login(){
             }
             setIsLoading(false);
         }catch(e){
-            if(e.response.status === 400){
-                alert('欄位驗證失敗。');
-            }
-            if(e.response.status === 401){
-                alert('帳號密碼輸入錯誤。');
-            }
-            if(e.response.status === 404){
-                alert('用戶不存在。');
-            }
+            // if(e.response.status === 400){
+            //     alert('欄位驗證失敗。');
+            // }
+            // if(e.response.status === 401){
+            //     alert('帳號密碼輸入錯誤。');
+            // }
+            // if(e.response.status === 404){
+            //     alert('用戶不存在。');
+            // }
+            alert(e.response.data.message);
             setIsLoading(false);
         }
     }

@@ -17,17 +17,19 @@ function TDLAll (){
 
     const deleteTodo = (id) => {
         useAxios.DELETE(id)
+        .then(() => getTodoList())
         .catch((err) => console.log(err.response.data));
     }
 
     const toggleTodo = (id) => {
         useAxios.TOGGLE(id)
+        .then(() => getTodoList())
         .catch((err) => console.log(err.response.data));
     }
 
     useEffect(() => {
         getTodoList();
-    },[todoList])
+    },[])
 
     return(
         <div className="todoList_list">

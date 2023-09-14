@@ -22,7 +22,7 @@ userRequest.interceptors.request.use(
 export default {
     async GET (){
         const res = await userRequest.get();
-        //console.log(res.data.data);
+        console.log('GET');
         return res.data.data;
     },
     async TOGGLE (id) {

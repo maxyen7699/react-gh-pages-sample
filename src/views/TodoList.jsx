@@ -19,23 +19,15 @@ function TodoList (){
         }
     }
 
-
-    // useEffect(() => {
-    //     // 取得 Cookie
-    //     const cookieValue = document.cookie
-    //       .split("; ")
-    //       .find((row) => row.startsWith("token="))
-    //       ?.split("=")[1];
-    //     // get userName
-    //     setUserName(
-    //         document.cookie
-    //       .split("; ")
-    //       .find((row) => row.startsWith("userName="))
-    //       ?.split("=")[1]
-    //     );
-    //     // 預設 axios 的表頭
-    //     axios.defaults.headers.common['Authorization'] = cookieValue;
-    //   }, []);
+    useEffect(() => {
+        // get userName
+        setUserName(
+            document.cookie
+          .split("; ")
+          .find((row) => row.startsWith("userName="))
+          ?.split("=")[1]
+        );
+      }, []);
 
     return(
         <div id="todoListPage" className="bg-half">
