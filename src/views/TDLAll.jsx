@@ -1,79 +1,35 @@
 import React, { useEffect, useState } from "react";
-import AddTodo from "../component/AddTodo";
-import axios from "axios";
 import TodoData from "../component/TodoData";
 import TodoListTab from "../component/TodoListTab";
 import NoDataList from "../component/NoDataList";
-const { VITE_APP_HOST } = import.meta.env;
+import useAxios from "../hooks/useAxios";
 
 function TDLAll (){
     const [todoList, setTodoList] = useState([]);
-    const [newTodo, setNewTodo] = useState('');
 
-    const getTodoList = async() => {
-        try{
-            const response = await axios.get(`${VITE_APP_HOST}/todos`);
-            setTodoList(response.data.data);
-        }catch(e){
-            console.log(e);
-        }
+    const getTodoList = () => {
+        useAxios.GET()
+        .then((res) => {
+            setTodoList(res);
+        })
+        .catch((err) => console.log(err.response.data));
     }
 
-    const deleteTodo = async(id)=> {
-        try{
-            console.log(id);
-            await axios.delete(`${VITE_APP_HOST}/todos/${id}`, {});
-            getTodoList();
-        }catch(e){
-            console.log(e);
-        }
+    const deleteTodo = (id) => {
+        useAxios.DELETE(id)
+        .catch((err) => console.log(err.response.data));
     }
 
-    const toggleTodo = async(id) => {
-        try{
-            await axios.patch(`${VITE_APP_HOST}/todos/${id}/toggle`, {});
-            getTodoList();
-        }catch(e){
-            console.log(e);
-        }
-    } 
-
-    const addTodo = async() => {
-        console.log(newTodo);
-        if(!newTodo){
-            return;
-        }
-        try{
-            const newData = {
-                content : newTodo
-            }
-            console.log(newTodo);
-            await axios.post(`${VITE_APP_HOST}/todos`,newData,{});
-            setNewTodo('');
-            getTodoList();
-
-        }catch(e){
-            console.log(e);
-        }
+    const toggleTodo = (id) => {
+        useAxios.TOGGLE(id)
+        .catch((err) => console.log(err.response.data));
     }
 
     useEffect(() => {
-        // 取得 Cookie
-        const cookieValue = document.cookie
-          .split("; ")
-          .find((row) => row.startsWith("token="))
-          ?.split("=")[1];
-
-        // 預設 axios 的表頭
-        axios.defaults.headers.common['Authorization'] = cookieValue;
         getTodoList();
-    },[])
+    },[todoList])
 
     return(
-        <div>
-        <div className="todoList_Content">
-            <AddTodo newTodo={newTodo} setNewTodo={setNewTodo} addTodo={addTodo}/>
-        </div>
         <div className="todoList_list">
             <TodoListTab/>
             <div className="todoList_items">
@@ -92,7 +48,6 @@ function TDLAll (){
                     }).length} 個待完成項目</p>
                 </div>
             </div>
-        </div>
         </div>
     )
 }

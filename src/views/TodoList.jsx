@@ -1,11 +1,14 @@
 import axios from "axios";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import AddTodo from "../component/AddTodo";
 const { VITE_APP_HOST } = import.meta.env;
 
 function TodoList (){
     const navigate = useNavigate();
     const [userName, setUserName] = useState('');
+    const [newTodo, setNewTodo] = useState('');
+
 
     const signOut = async() => {
         try{
@@ -16,22 +19,23 @@ function TodoList (){
         }
     }
 
-    useEffect(() => {
-        // 取得 Cookie
-        const cookieValue = document.cookie
-          .split("; ")
-          .find((row) => row.startsWith("token="))
-          ?.split("=")[1];
-        // get userName
-        setUserName(
-            document.cookie
-          .split("; ")
-          .find((row) => row.startsWith("userName="))
-          ?.split("=")[1]
-        );
-        // 預設 axios 的表頭
-        axios.defaults.headers.common['Authorization'] = cookieValue;
-      }, []);
+
+    // useEffect(() => {
+    //     // 取得 Cookie
+    //     const cookieValue = document.cookie
+    //       .split("; ")
+    //       .find((row) => row.startsWith("token="))
+    //       ?.split("=")[1];
+    //     // get userName
+    //     setUserName(
+    //         document.cookie
+    //       .split("; ")
+    //       .find((row) => row.startsWith("userName="))
+    //       ?.split("=")[1]
+    //     );
+    //     // 預設 axios 的表頭
+    //     axios.defaults.headers.common['Authorization'] = cookieValue;
+    //   }, []);
 
     return(
         <div id="todoListPage" className="bg-half">
@@ -47,7 +51,10 @@ function TodoList (){
                 </ul>
             </nav>
             <div className="conatiner todoListPage vhContainer">
-                <Outlet/>
+                <div className="todoList_Content">
+                    <AddTodo newTodo={newTodo} setNewTodo={setNewTodo}/>
+                </div>        
+                <Outlet/>  
             </div>
         </div>
 
