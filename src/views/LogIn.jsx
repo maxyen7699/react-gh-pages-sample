@@ -1,8 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { NavLink, useNavigate } from "react-router-dom";
-const { VITE_APP_HOST } = import.meta.env;
-
+import useAxios from "../hooks/useAxios";
 
 function Login(){
 
@@ -23,7 +22,12 @@ function Login(){
             ...formData,
             [name] : e.target.value
         });
-        //console.log(name);
+        if(name === 'email'){
+            !e.target.value ? setShowEmailErr(true) : setShowEmailErr(false);
+        }
+        if(name === 'password'){
+            !e.target.value ? setShowPasswordErr(true) : setShowPasswordErr(false);
+        }
     }
 
     const login = async() => {
@@ -33,26 +37,14 @@ function Login(){
             !email ? setShowEmailErr(true) : setShowEmailErr(false);
             !password ? setShowPasswordErr(true) : setShowPasswordErr(false);
             if(!showEmailErr && !showPasswordErr){
-                const response = await axios.post(`${VITE_APP_HOST}/users/sign_in`, formData);
-                document.cookie = `token=${response.data.token}`;
-                document.cookie = `userName=${response.data.nickname}`;
-                console.log(response)
+                const response = await useAxios.LOGIN(formData);
+                document.cookie = `token=${response.token}`;
+                document.cookie = `userName=${response.nickname}`;
                 alert('登入成功。');
-                //navigate('/todoList');
-                navigate("/todoList/TDLAll");
-
+                navigate('/todoList');
             }
             setIsLoading(false);
         }catch(e){
-            // if(e.response.status === 400){
-            //     alert('欄位驗證失敗。');
-            // }
-            // if(e.response.status === 401){
-            //     alert('帳號密碼輸入錯誤。');
-            // }
-            // if(e.response.status === 404){
-            //     alert('用戶不存在。');
-            // }
             alert(e.response.data.message);
             setIsLoading(false);
         }
@@ -76,6 +68,7 @@ function Login(){
                 <NavLink className="formControls_btnLink" to="/SignUp">註冊帳號</NavLink>
             </form>
         </div>
+        
     )
 }
 

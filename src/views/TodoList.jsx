@@ -1,22 +1,86 @@
-import axios from "axios";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import useAxios from "../hooks/useAxios";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import TodoListTab from "../component/TodoListTab";
+import NoDataList from "../component/NoDataList";
 import AddTodo from "../component/AddTodo";
-const { VITE_APP_HOST } = import.meta.env;
+import TodoData from "../component/TodoData";
 
 function TodoList (){
     const navigate = useNavigate();
     const [userName, setUserName] = useState('');
     const [newTodo, setNewTodo] = useState('');
+    const [oriTodoList , setOriTodoList] = useState([]);//原始資料
+    const [todoList, setTodoList] = useState([]);//顯示用資料
+    const [tag, setTag] = useState('ALL');
 
+    const logOut = () => {
+        useAxios.LOGOUT()
+        .then(() => navigate("/"));
+    }
 
-    const signOut = async() => {
+    const chgTag = (e, tag) => {
+        e.preventDefault();
+        setTag(tag);
+    }
+
+    const getTodoList = async() => {
         try{
-            await axios.post(`${VITE_APP_HOST}/users/sign_out`);
-            navigate("/");
+            const res = await useAxios.GET();
+            setOriTodoList(res);
+            if(tag === 'ALL'){
+                setTodoList(res);
+            }
+            else if(tag === 'PENDING'){
+                setTodoList(res.filter((todo) => {return todo.status === false}));
+            }
+            else if(tag === 'FINISHED'){
+                setTodoList(res.filter((todo) => {return todo.status === true}));
+            }
         }catch(e){
-            console.log(e);
+            alert(e.response.data.message);
         }
+    }
+
+    const addTodo = async() => {
+        if(!newTodo){
+            return;
+        }
+        try{
+            const newData = {
+                content : newTodo
+            };
+            await useAxios.ADD(newData);
+            setNewTodo('');
+            getTodoList();
+        }catch(e){
+            alert(e.response.data.message);
+        }
+    }
+
+    const deleteTodo = async(id) => {
+        try{
+            await useAxios.DELETE(id);
+        }catch(e){
+            alert(e.response.data.message);
+        }finally{
+            getTodoList();
+        }
+    }
+
+    const deleteAll = () => {
+        const delArr = oriTodoList.filter((todo) => {return todo.status === true});
+        if(delArr.length > 0){
+            delArr.map((data) => {
+                deleteTodo(data.id);
+            })
+        }
+    }
+
+    const toggleTodo = (id) => {
+        useAxios.TOGGLE(id)
+        .then(() => getTodoList())
+        .catch((err) => console.log(err.response.data));
     }
 
     useEffect(() => {
@@ -29,6 +93,10 @@ function TodoList (){
         );
       }, []);
 
+    useEffect(() => {
+        getTodoList();
+    }, [tag]);
+
     return(
         <div id="todoListPage" className="bg-half">
             <nav>
@@ -39,14 +107,33 @@ function TodoList (){
                 </div>
                 <ul>
                     <li className="todo_sm"><NavLink to="#"><span>{userName}的代辦</span></NavLink></li>
-                    <li><NavLink to="#" onClick={signOut}>登出</NavLink></li>
+                    <li><NavLink to="#" onClick={logOut}>登出</NavLink></li>
                 </ul>
             </nav>
             <div className="conatiner todoListPage vhContainer">
                 <div className="todoList_Content">
-                    <AddTodo newTodo={newTodo} setNewTodo={setNewTodo}/>
+                    <AddTodo newTodo={newTodo} setNewTodo={setNewTodo} addTodo={addTodo}/>
                 </div>        
-                <Outlet/>  
+                <div className="todoList_list">
+                    <TodoListTab tag={tag} chgTag={chgTag}/>
+                    <div className="todoList_items">
+                        <ul className="todoList_item">
+                            {todoList.length === 0 ? 
+                                <NoDataList/>
+                                :
+                                todoList.map((todo, index) => (
+                                    <TodoData key={index} index={index} todo={todo} deleteTodo={deleteTodo} toggleTodo={toggleTodo}/>
+                                ))              
+                            }
+                        </ul>
+                        <div className="todoList_statistics">
+                            <p> {todoList.filter((todo)=>{
+                                return todo.status !== true;
+                            }).length} 個待完成項目</p>
+                            <NavLink to="#" onClick={deleteAll} hidden={tag !== 'FINISHED' ? true : false}>清除已完成項目</NavLink>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

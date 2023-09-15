@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { NavLink, useNavigate } from "react-router-dom";
-const { VITE_APP_HOST } = import.meta.env;
+import useAxios from "../hooks/useAxios";
 
 function SignUp(){
     const [formData, setFormData] = useState({
@@ -13,6 +13,7 @@ function SignUp(){
     const [btnDisable, setBtnDisable] = useState(false);
     const [showEmailErr, setShowEmailErr] = useState(false);
     const [showPasswordErr, setShowPasswordErr] = useState(false);
+    const [showNicknameErr, setShowNicknameErr] = useState(false);
     const [showPwdErr, setShowPwdErr] = useState(false);
     const navigate = useNavigate() // 把 hook 取出來做使用
 
@@ -23,6 +24,12 @@ function SignUp(){
             ...formData,
             [name] : e.target.value
         });
+        if(name === 'email'){
+            !e.target.value ? setShowEmailErr(true) : setShowEmailErr(false);
+        }
+        if(name === 'password'){
+            !e.target.value ? setShowPasswordErr(true) : setShowPasswordErr(false);
+        }
     }
 
     const checkPwd = (e) => {
@@ -42,20 +49,17 @@ function SignUp(){
     const signUp = async() => {
         try{
             setBtnDisable(true);
-            const{email, nickname, password, pwd} = formData;
+            const {email, nickname, password, pwd} = formData;
             !email ? setShowEmailErr(true) : setShowEmailErr(false);
             !password ? setShowPasswordErr(true) : setShowPasswordErr(false);
+            !nickname ? setShowNicknameErr(true) : setShowNicknameErr(false);
             password !== pwd ? setShowPwdErr(true) : setShowPwdErr(false);
-            if(!showEmailErr && !showPasswordErr && !showPwdErr){
-                const response = await axios.post(`${VITE_APP_HOST}/users/sign_up`, formData);
-                alert('註冊成功。');
-                navigate('/');
-            }
+            await useAxios.SIGNUP(formData);
+            alert('註冊成功。');
+            navigate('/');
         }catch(e){
-            console.log(e);
-            if(e.response.status === 400) {
-                alert(e.response.data.message);
-            }
+            console.log(e.response.data.message);
+        }finally{
             setBtnDisable(false);
         }
     }
@@ -70,6 +74,7 @@ return(
             <input className="formControls_input" 
             type="text" name="nickname" id="nickname" 
             placeholder="請輸入您的暱稱" onChange={handleChg}/>
+            {showNicknameErr ? <span>暱稱為必填</span> : <span/>}
 
             <label className="formControls_label" htmlFor="email">Email</label>
             <input className="formControls_input" 

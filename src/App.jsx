@@ -18,9 +18,9 @@ return(
             </Route>
             
             <Route path="/todoList" element={<TodoList/>}>
-                    <Route path="TDLAll" element={<TDLAll/>} />
+                    {/*<Route path="TDLAll" element={<TDLAll/>} />
                     <Route path="TDLUnFin" element={<TDLUnFin/>} />
-                    <Route path="TDLFin" element={<TDLFin/>} />
+<Route path="TDLFin" element={<TDLFin/>} />*/}
             </Route>
             <Route path="*" element={<NotFoundPage/>}/>
         </Routes>
