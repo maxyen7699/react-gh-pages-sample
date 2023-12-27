@@ -53,6 +53,8 @@ function TodoList (){
             await useAxios.ADD(newData);
             setNewTodo('');
             getTodoList();
+            setTag('ALL');
+            navigate('/todoList');
         }catch(e){
             alert(e.response.data.message);
         }
@@ -83,6 +85,13 @@ function TodoList (){
         .catch((err) => console.log(err.response.data));
     }
 
+    //用onKeyDown偵測特定的案件被按下時執行的function
+    const keydown = (val) => {
+        if(val === 'Enter'){
+            addTodo();
+        }
+    }
+
     useEffect(() => {
         // get userName
         setUserName(
@@ -95,6 +104,7 @@ function TodoList (){
 
     useEffect(() => {
         getTodoList();
+        //alert(tag);
     }, [tag]);
 
     return(
@@ -112,14 +122,14 @@ function TodoList (){
             </nav>
             <div className="conatiner todoListPage vhContainer">
                 <div className="todoList_Content">
-                    <AddTodo newTodo={newTodo} setNewTodo={setNewTodo} addTodo={addTodo}/>
+                    <AddTodo newTodo={newTodo} setNewTodo={setNewTodo} addTodo={addTodo} keydown={keydown}/>
                 </div>        
                 <div className="todoList_list">
                     <TodoListTab tag={tag} chgTag={chgTag}/>
                     <div className="todoList_items">
                         <ul className="todoList_item">
                             {todoList.length === 0 ? 
-                                <NoDataList/>
+                                <NoDataList tag={tag}/>
                                 :
                                 todoList.map((todo, index) => (
                                     <TodoData key={index} index={index} todo={todo} deleteTodo={deleteTodo} toggleTodo={toggleTodo}/>
@@ -127,7 +137,7 @@ function TodoList (){
                             }
                         </ul>
                         <div className="todoList_statistics">
-                            <p> {todoList.filter((todo)=>{
+                            <p> {oriTodoList.filter((todo)=>{
                                 return todo.status !== true;
                             }).length} 個待完成項目</p>
                             <NavLink to="#" onClick={deleteAll} hidden={tag !== 'FINISHED' ? true : false}>清除已完成項目</NavLink>

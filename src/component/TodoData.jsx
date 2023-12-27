@@ -12,8 +12,8 @@ function TodoData ({index, todo, deleteTodo, toggleTodo}){
                     }}/>
                 <span>{todo.content}</span>
             </label>
-            <NavLink to="#">
-                <i className="fa fa-times" onClick={() => deleteTodo(todo.id)}>x</i>
+            <NavLink to="#" onClick={() => deleteTodo(todo.id)}>
+                <i className="fa fa-times" >x</i>
             </NavLink>
         </li>    
     )

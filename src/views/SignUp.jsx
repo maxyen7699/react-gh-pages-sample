@@ -24,6 +24,9 @@ function SignUp(){
             ...formData,
             [name] : e.target.value
         });
+        if(name === 'nickname'){
+            !e.target.value ? setShowNicknameErr(true) : setShowNicknameErr(false);
+        }
         if(name === 'email'){
             !e.target.value ? setShowEmailErr(true) : setShowEmailErr(false);
         }
@@ -54,11 +57,17 @@ function SignUp(){
             !password ? setShowPasswordErr(true) : setShowPasswordErr(false);
             !nickname ? setShowNicknameErr(true) : setShowNicknameErr(false);
             password !== pwd ? setShowPwdErr(true) : setShowPwdErr(false);
-            await useAxios.SIGNUP(formData);
-            alert('註冊成功。');
-            navigate('/');
+            if(!showPwdErr){
+                await useAxios.SIGNUP(formData);
+                alert('註冊成功。');
+                navigate('/');
+            }else{
+                alert('密碼輸入不一致');
+            }
+            
         }catch(e){
-            console.log(e.response.data.message);
+            //console.log(e.response.data.message);
+            alert(e.response.data.message);
         }finally{
             setBtnDisable(false);
         }
